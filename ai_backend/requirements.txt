@@ -1,0 +1,16 @@
+alembic==1.17.0
+fastapi==0.119.0
+jose==1.0.0
+passlib==1.7.4
+pydantic==2.12.0
+pydantic[email]
+pydantic_settings==2.11.0
+python_jose==3.5.0
+SQLAlchemy==2.0.44
+uvicorn==0.38.0
+aiofiles
+python-dotenv
+asyncpg
+aiosqlite
+python-multipart
+bcrypt==4.0.0
