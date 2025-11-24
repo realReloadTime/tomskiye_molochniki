@@ -1,0 +1,12 @@
+torch
+torchvision
+pandas
+scikit-learn
+numpy
+nltk
+kagglehub
+huggingface_hub
+datasets
+aiofiles
+matplotlib
+tqdm
