@@ -10,3 +10,4 @@ datasets
 aiofiles
 matplotlib
 tqdm
+seaborn

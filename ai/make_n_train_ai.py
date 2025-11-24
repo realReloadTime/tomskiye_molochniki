@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
@@ -17,18 +17,12 @@ import multiprocessing as mp
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import time
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-import os
-
+from concurrent.futures import ProcessPoolExecutor
+import seaborn as sns
+import joblib
 
 import nltk
 from nltk.stem.snowball import SnowballStemmer
-
-'''
-If you did not install the data to one of the above central locations, you will need to set the NLTK_DATA 
-environment variable to specify the location of the data. (On a Windows machine, right click on 
-"My Computer" then select Properties > Advanced > Environment Variables > User Variables > New...)
-'''
 
 nltk.download('averaged_perceptron_tagger_rus', 'C:\\nltk_data')
 nltk.download('stopwords', 'C:\\nltk_data')
@@ -41,20 +35,16 @@ def upper_case_rate(string):
 
 def clean_text(string: str) -> str:
     string = string.lower()
-    string = re.sub(r"http\S+", "", string)  # deletion urls
+    string = re.sub(r"http\S+", "", string)
     string = string.replace('ё', 'е')
 
-    # cyrillic + latin
     words = re.findall(r'[а-яa-z]+', string)
-
-    # deletion "и", "а", "на", "в", etc.
     stopwords = set(nltk.corpus.stopwords.words('russian'))
     words = [w for w in words if w not in stopwords]
 
     functionalPos = {'CONJ', 'PRCL'}
     words = [w for w, pos in nltk.pos_tag(words, lang='rus') if pos not in functionalPos]
 
-    # "Я ходил в магазин и купил молоко, а потом бегал в парке! http://example.com" -> "ход магазин куп молок бега парк"
     stemmer = SnowballStemmer('russian')
     stemmed_words = [stemmer.stem(word) for word in words]
 
@@ -69,11 +59,9 @@ def clean_text_batch(texts):
 def clean_texts_parallel(texts, num_processes=None):
     """Многопроцессорная очистка текстов"""
     if num_processes is None:
-        num_processes = min(mp.cpu_count(), 8)  # Ограничиваем максимум 8 процессами
+        num_processes = min(mp.cpu_count(), 8)
 
     print(f"Using {num_processes} processes for text cleaning...")
-
-    # Разбиваем тексты на батчи
     batch_size = max(1, len(texts) // num_processes)
     batches = [texts[i:i + batch_size] for i in range(0, len(texts), batch_size)]
 
@@ -84,7 +72,6 @@ def clean_texts_parallel(texts, num_processes=None):
             desc="Cleaning texts"
         ))
 
-    # Объединяем результаты
     cleaned_texts = []
     for result in results:
         cleaned_texts.extend(result)
@@ -93,32 +80,45 @@ def clean_texts_parallel(texts, num_processes=None):
 
 
 class SimpleNN(nn.Module):
-    """Простая нейронная сеть для классификации"""
+    """Улучшенная нейронная сеть для классификации"""
 
-    def __init__(self, input_size, hidden_size=128, num_classes=1):
+    def __init__(self, input_size, hidden_size=256, num_classes=1):
         super(SimpleNN, self).__init__()
+        # Увеличиваем capacity сети
         self.fc1 = nn.Linear(input_size, hidden_size)
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.3)
+        self.bn1 = nn.BatchNorm1d(hidden_size)  # BatchNorm для стабилизации обучения
         self.fc2 = nn.Linear(hidden_size, hidden_size // 2)
-        self.fc3 = nn.Linear(hidden_size // 2, num_classes)
+        self.bn2 = nn.BatchNorm1d(hidden_size // 2)
+        self.fc3 = nn.Linear(hidden_size // 2, hidden_size // 4)
+        self.bn3 = nn.BatchNorm1d(hidden_size // 4)
+        self.fc4 = nn.Linear(hidden_size // 4, num_classes)
+
+        self.relu = nn.ReLU()
+        self.dropout = nn.Dropout(0.5)  # Увеличиваем dropout для борьбы с переобучением
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
         x = self.fc1(x)
+        x = self.bn1(x)
         x = self.relu(x)
         x = self.dropout(x)
+
         x = self.fc2(x)
+        x = self.bn2(x)
         x = self.relu(x)
         x = self.dropout(x)
+
         x = self.fc3(x)
+        x = self.bn3(x)
+        x = self.relu(x)
+        x = self.dropout(x)
+
+        x = self.fc4(x)
         x = self.sigmoid(x)
         return x
 
 
 class TextDataset(Dataset):
-    """Dataset для текстовых данных"""
-
     def __init__(self, features, labels):
         self.features = features
         self.labels = labels
@@ -131,98 +131,145 @@ class TextDataset(Dataset):
 
 
 def plot_training_history(history):
-    """Построение графиков обучения"""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+    """Улучшенная визуализация обучения"""
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
 
     # График потерь
-    ax1.plot(history['train_loss'], label='Training Loss')
-    ax1.plot(history['val_loss'], label='Validation Loss')
-    ax1.set_title('Training and Validation Loss')
+    ax1.plot(history['train_loss'], label='Training Loss', linewidth=2)
+    ax1.plot(history['val_loss'], label='Validation Loss', linewidth=2)
+    ax1.set_title('Training and Validation Loss', fontsize=14)
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.legend()
-    ax1.grid(True)
+    ax1.grid(True, alpha=0.3)
 
     # График точности
-    ax2.plot(history['train_accuracy'], label='Training Accuracy')
-    ax2.plot(history['val_accuracy'], label='Validation Accuracy')
-    ax2.set_title('Training and Validation Accuracy')
+    ax2.plot(history['train_accuracy'], label='Training Accuracy', linewidth=2)
+    ax2.plot(history['val_accuracy'], label='Validation Accuracy', linewidth=2)
+    ax2.set_title('Training and Validation Accuracy', fontsize=14)
     ax2.set_xlabel('Epoch')
-    ax2.set_ylabel('Accuracy')
+    ax2.set_ylabel('Accuracy (%)')
     ax2.legend()
-    ax2.grid(True)
+    ax2.grid(True, alpha=0.3)
+
+    # График F1-score
+    ax3.plot(history['train_f1'], label='Training F1', linewidth=2)
+    ax3.plot(history['val_f1'], label='Validation F1', linewidth=2)
+    ax3.set_title('Training and Validation F1-Score', fontsize=14)
+    ax3.set_xlabel('Epoch')
+    ax3.set_ylabel('F1-Score')
+    ax3.legend()
+    ax3.grid(True, alpha=0.3)
+
+    # График learning rate
+    ax4.plot(history['learning_rate'], label='Learning Rate', linewidth=2, color='red')
+    ax4.set_title('Learning Rate Schedule', fontsize=14)
+    ax4.set_xlabel('Epoch')
+    ax4.set_ylabel('Learning Rate')
+    ax4.set_yscale('log')
+    ax4.legend()
+    ax4.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('training_history.png', dpi=150, bbox_inches='tight')
+    plt.savefig('training_history_detailed.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 
+def calculate_f1(predictions, labels):
+    """Вычисление F1-score"""
+    predictions_binary = (predictions > 0.5).float()
+    f1 = metrics.f1_score(labels.cpu().numpy(), predictions_binary.cpu().numpy())
+    return f1
+
+
 def train_nn(data: pd.DataFrame):
-    """Обучение нейронной сети с многопроцессорной предобработкой"""
+    """Улучшенное обучение с правильным разделением на train/val/test"""
     start_time = time.time()
 
-    # Добавляем признак uppercase rate
+    # Предобработка
     print("Calculating uppercase rates...")
     data['upcase_rate'] = list(map(upper_case_rate, data.comment.values))
     text = np.array(data.comment.values)
     target = data.toxic.astype(int).values
 
-    # Многопроцессорная очистка текстов
     print("Starting parallel text cleaning...")
     text = clean_texts_parallel(text.tolist())
 
     preprocessing_time = time.time() - start_time
     print(f"Text preprocessing completed in {preprocessing_time:.2f} seconds")
 
-    X_train, X_test, y_train, y_test = train_test_split(text, target, test_size=.3, stratify=target, shuffle=True,
-                                                        random_state=0)
-    print('Dim of train:', len(X_train), '\tTarget rate: {:.2f}%'.format(y_train.mean() * 100))
-    print("Dim of test:", len(X_test), '\tTarget rate: {:.2f}%'.format(y_test.mean() * 100))
+    # ПРАВИЛЬНОЕ РАЗДЕЛЕНИЕ ДАННЫХ: 60% train, 20% validation, 20% test
+    X_temp, X_test, y_temp, y_test = train_test_split(
+        text, target, test_size=0.2, stratify=target, shuffle=True, random_state=0
+    )
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_temp, y_temp, test_size=0.25, stratify=y_temp, shuffle=True, random_state=0  # 0.25 * 0.8 = 0.2
+    )
 
-    # Векторизация текста
+    print('Data split:')
+    print(f'Train: {len(X_train)} \tTarget rate: {y_train.mean() * 100:.2f}%')
+    print(f'Val: {len(X_val)} \tTarget rate: {y_val.mean() * 100:.2f}%')
+    print(f'Test: {len(X_test)} \tTarget rate: {y_test.mean() * 100:.2f}%')
+
+    # Векторизация
     print("Vectorizing texts...")
-    vectorizer = TfidfVectorizer(max_features=5000)
+    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))  # Добавляем биграммы
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
+    X_val_vec = vectorizer.transform(X_val).toarray()
     X_test_vec = vectorizer.transform(X_test).toarray()
 
     print(f"Feature dimension: {X_train_vec.shape[1]}")
 
-    # Создание Dataset и DataLoader
+    # Сохраняем векторизатор для будущего использования
+    joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')
+
+    # DataLoader
     train_dataset = TextDataset(torch.FloatTensor(X_train_vec), torch.FloatTensor(y_train))
+    val_dataset = TextDataset(torch.FloatTensor(X_val_vec), torch.FloatTensor(y_val))
     test_dataset = TextDataset(torch.FloatTensor(X_test_vec), torch.FloatTensor(y_test))
 
-    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)  # Увеличиваем batch size
+    val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
-    # Инициализация модели
+    # Модель и оптимизатор
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    model = SimpleNN(input_size=X_train_vec.shape[1], hidden_size=256)
+    model = SimpleNN(input_size=X_train_vec.shape[1], hidden_size=512)  # Увеличиваем hidden size
     model.to(device)
 
-    criterion = nn.BCELoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-5)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.1)
+    # Взвешенная функция потерь для борьбы с дисбалансом классов
+    pos_weight = torch.tensor([(len(y_train) - sum(y_train)) / sum(y_train)]).to(device)
+    criterion = nn.BCELoss(weight=pos_weight)
+
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)  # AdamW + регуляризация
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=2, factor=0.5)
 
     history = {
-        'train_loss': [],
-        'train_accuracy': [],
-        'val_loss': [],
-        'val_accuracy': []
+        'train_loss': [], 'train_accuracy': [], 'train_f1': [],
+        'val_loss': [], 'val_accuracy': [], 'val_f1': [],
+        'learning_rate': []
     }
 
-    num_epochs = 10
+    num_epochs = 20
+    best_val_f1 = 0
+    patience = 5
+    patience_counter = 0
+
     print("Starting training...")
 
     for epoch in range(num_epochs):
+        # Training
         model.train()
         train_loss = 0.0
         train_correct = 0
         train_total = 0
+        all_train_preds = []
+        all_train_labels = []
 
         train_pbar = tqdm(train_loader, desc=f'Epoch {epoch + 1}/{num_epochs} [Train]')
-        for batch_idx, (features, labels) in enumerate(train_pbar):
+        for features, labels in train_pbar:
             features, labels = features.to(device), labels.to(device)
 
             optimizer.zero_grad()
@@ -236,20 +283,23 @@ def train_nn(data: pd.DataFrame):
             train_total += labels.size(0)
             train_correct += (predicted == labels).sum().item()
 
+            all_train_preds.extend(outputs.detach())
+            all_train_labels.extend(labels.detach())
+
             train_pbar.set_postfix({
                 'Loss': f'{loss.item():.4f}',
                 'Acc': f'{100. * train_correct / train_total:.2f}%'
             })
 
-        scheduler.step()
-
-        # Validation phase
+        # Validation
         model.eval()
         val_loss = 0.0
         val_correct = 0
         val_total = 0
+        all_val_preds = []
+        all_val_labels = []
 
-        val_pbar = tqdm(test_loader, desc=f'Epoch {epoch + 1}/{num_epochs} [Val]')
+        val_pbar = tqdm(val_loader, desc=f'Epoch {epoch + 1}/{num_epochs} [Val]')
         with torch.no_grad():
             for features, labels in val_pbar:
                 features, labels = features.to(device), labels.to(device)
@@ -262,48 +312,137 @@ def train_nn(data: pd.DataFrame):
                 val_total += labels.size(0)
                 val_correct += (predicted == labels).sum().item()
 
+                all_val_preds.extend(outputs)
+                all_val_labels.extend(labels)
+
                 val_pbar.set_postfix({
                     'Loss': f'{loss.item():.4f}',
                     'Acc': f'{100. * val_correct / val_total:.2f}%'
                 })
 
-        # Сохранение метрик
+        # Метрики
         avg_train_loss = train_loss / len(train_loader)
-        avg_val_loss = val_loss / len(test_loader)
+        avg_val_loss = val_loss / len(val_loader)
         train_accuracy = 100. * train_correct / train_total
         val_accuracy = 100. * val_correct / val_total
 
+        # Вычисляем F1 для обоих наборов
+        train_f1 = calculate_f1(torch.stack(all_train_preds), torch.stack(all_train_labels))
+        val_f1 = calculate_f1(torch.stack(all_val_preds), torch.stack(all_val_labels))
+
+        # Обновляем историю
         history['train_loss'].append(avg_train_loss)
         history['val_loss'].append(avg_val_loss)
         history['train_accuracy'].append(train_accuracy)
         history['val_accuracy'].append(val_accuracy)
+        history['train_f1'].append(train_f1)
+        history['val_f1'].append(val_f1)
+        history['learning_rate'].append(optimizer.param_groups[0]['lr'])
+
+        # Early Stopping по F1 на валидации
+        if val_f1 > best_val_f1:
+            best_val_f1 = val_f1
+            patience_counter = 0
+            # Сохраняем лучшую модель
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'val_f1': val_f1,
+            }, 'best_model.pth')
+            print(f"New best model saved with Val F1: {val_f1:.4f}")
+        else:
+            patience_counter += 1
+
+        scheduler.step(avg_val_loss)
 
         print(f'Epoch {epoch + 1}/{num_epochs}:')
-        print(f'  Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.2f}%')
-        print(f'  Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.2f}%')
+        print(f'  Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Train F1: {train_f1:.4f}')
+        print(f'  Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.2f}%, Val F1: {val_f1:.4f}')
+        print(f'  Learning Rate: {optimizer.param_groups[0]["lr"]:.2e}')
         print()
 
+        if patience_counter >= patience:
+            print(f"Early stopping triggered after {epoch + 1} epochs")
+            break
+
+    # Загружаем лучшую модель для тестирования
+    checkpoint = torch.load('best_model.pth')
+    model.load_state_dict(checkpoint['model_state_dict'])
+    print(f"Loaded best model from epoch {checkpoint['epoch'] + 1} with Val F1: {checkpoint['val_f1']:.4f}")
+
+    # ВИЗУАЛИЗАЦИЯ
     plot_training_history(history)
 
+    # ТЕСТИРОВАНИЕ НА TEST SET (только один раз!)
+    print("\n" + "=" * 60)
+    print("FINAL TESTING ON TEST SET")
+    print("=" * 60)
+
     model.eval()
-    all_predictions = []
-    all_labels = []
+    all_test_predictions = []
+    all_test_labels = []
+    test_probabilities = []
 
     with torch.no_grad():
         for features, labels in test_loader:
             features = features.to(device)
             outputs = model(features).squeeze()
             predictions = (outputs > 0.5).float().cpu().numpy()
-            all_predictions.extend(predictions)
-            all_labels.extend(labels.numpy())
+            all_test_predictions.extend(predictions)
+            all_test_labels.extend(labels.numpy())
+            test_probabilities.extend(outputs.cpu().numpy())
 
     total_time = time.time() - start_time
-    print(f"Total training time: {total_time:.2f} seconds")
+    print(f"Total training and testing time: {total_time:.2f} seconds")
 
-    print("\nFinal Classification Report:")
-    print(classification_report(all_labels, all_predictions))
-    f1_final = metrics.f1_score(all_labels, all_predictions)
-    print(f"Final F1 Score: {f1_final:.4f}")
+    # Детальная оценка на TEST SET
+    print("\nTEST SET Classification Report:")
+    print(classification_report(all_test_labels, all_test_predictions))
+
+    test_f1 = metrics.f1_score(all_test_labels, all_test_predictions)
+    test_accuracy = metrics.accuracy_score(all_test_labels, all_test_predictions)
+    test_precision = metrics.precision_score(all_test_labels, all_test_predictions)
+    test_recall = metrics.recall_score(all_test_labels, all_test_predictions)
+
+    print(f"TEST SET Metrics:")
+    print(f"Accuracy:  {test_accuracy:.4f}")
+    print(f"Precision: {test_precision:.4f}")
+    print(f"Recall:    {test_recall:.4f}")
+    print(f"F1-Score:  {test_f1:.4f}")
+
+    # Матрица ошибок
+    cm = confusion_matrix(all_test_labels, all_test_predictions)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.title('Confusion Matrix - Test Set')
+    plt.ylabel('True Label')
+    plt.xlabel('Predicted Label')
+    plt.savefig('confusion_matrix_test.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+    # ROC Curve
+    fpr, tpr, _ = metrics.roc_curve(all_test_labels, test_probabilities)
+    roc_auc = metrics.auc(fpr, tpr)
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.4f})')
+    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC) - Test Set')
+    plt.legend(loc="lower right")
+    plt.grid(True, alpha=0.3)
+    plt.savefig('roc_curve_test.png', dpi=150, bbox_inches='tight')
+    plt.show()
+
+    print(f"\nROC AUC Score: {roc_auc:.4f}")
+
+    # Сохраняем финальную модель
+    torch.save(model.state_dict(), 'final_toxicity_model.pth')
+    print("Final model saved as 'final_toxicity_model.pth'")
 
 
 def test_gpu_cuda():
@@ -311,7 +450,6 @@ def test_gpu_cuda():
     print(f"CUDA available: {torch.cuda.is_available()}")
     print(f"CUDA version: {torch.version.cuda}")
     print(f"GPU name: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'No GPU'}")
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     print(f"Available CPU cores: {mp.cpu_count()}")
@@ -330,5 +468,4 @@ if __name__ == "__main__":
     total_df = pd.concat([df1, df2], axis=0, ignore_index=True)
 
     test_gpu_cuda()
-
     train_nn(total_df)
