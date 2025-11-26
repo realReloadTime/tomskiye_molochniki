@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\tomskiye_molochniki\\ai_backend\\BackendSite\\BackendSite.csproj": {}
+    "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj": {}
   },
   "projects": {
-    "D:\\tomskiye_molochniki\\ai_backend\\BackendSite\\BackendSite.csproj": {
+    "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\tomskiye_molochniki\\ai_backend\\BackendSite\\BackendSite.csproj",
+        "projectUniqueName": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj",
         "projectName": "BackendSite",
-        "projectPath": "D:\\tomskiye_molochniki\\ai_backend\\BackendSite\\BackendSite.csproj",
+        "projectPath": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj",
         "packagesPath": "C:\\Users\\slava\\.nuget\\packages\\",
-        "outputPath": "D:\\tomskiye_molochniki\\ai_backend\\BackendSite\\obj\\",
+        "outputPath": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -50,6 +50,10 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
               "version": "[9.0.8, )"
