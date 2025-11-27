@@ -3,28 +3,40 @@
   "WorkspaceRootPath": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\PasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\PasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\AuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\AuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\ICookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\RegistrationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\CookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\CookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\AuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\AuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IPasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\IPasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\ICookieService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Middleware\\SessionMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\User\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\IAuthService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\Statistic.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -39,28 +51,8 @@
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\User\\User.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Models\\User\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Middleware\\SessionMiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Data\\DbContext.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\DbContext.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\RegistrationController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IPasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Services\\IPasswordHasherService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
@@ -78,7 +70,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 9,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -86,124 +78,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "User.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\User.cs",
-              "RelativeDocumentMoniker": "Models\\User\\User.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\User.cs",
-              "RelativeToolTip": "Models\\User\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:44:47.943Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "UserDtos.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\UserDtos.cs",
-              "RelativeDocumentMoniker": "Models\\User\\UserDtos.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\UserDtos.cs",
-              "RelativeToolTip": "Models\\User\\UserDtos.cs",
+              "DocumentIndex": 5,
+              "Title": "ICookieService.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs",
+              "RelativeDocumentMoniker": "Services\\ICookieService.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs",
+              "RelativeToolTip": "Services\\ICookieService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-26T21:18:11.109Z",
+              "WhenOpened": "2025-11-27T09:16:05.753Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Statistic.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\Statistic.cs",
-              "RelativeDocumentMoniker": "Models\\Statistic.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\Statistic.cs",
-              "RelativeToolTip": "Models\\Statistic.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T10:18:56.423Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "Services\\AuthService.cs",
               "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\AuthService.cs",
               "RelativeToolTip": "Services\\AuthService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFYAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-27T07:46:18.915Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CookieService.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\CookieService.cs",
-              "RelativeDocumentMoniker": "Services\\CookieService.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\CookieService.cs",
-              "RelativeToolTip": "Services\\CookieService.cs",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAAB0AAAAoAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAADAAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:46:48.097Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "IAuthService.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs",
-              "RelativeDocumentMoniker": "Services\\IAuthService.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs",
-              "RelativeToolTip": "Services\\IAuthService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:46:08.416Z",
+              "WhenOpened": "2025-11-27T07:44:11.576Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ICookieService.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs",
-              "RelativeDocumentMoniker": "Services\\ICookieService.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\ICookieService.cs",
-              "RelativeToolTip": "Services\\ICookieService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Title": "RegistrationController.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\RegistrationController.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs",
+              "RelativeToolTip": "Controllers\\RegistrationController.cs",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAADcAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:46:35.901Z",
+              "WhenOpened": "2025-11-26T20:49:08.658Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PasswordHasherService.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\PasswordHasherService.cs",
-              "RelativeDocumentMoniker": "Services\\PasswordHasherService.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\PasswordHasherService.cs",
-              "RelativeToolTip": "Services\\PasswordHasherService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-26T20:49:16.952Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T09:36:11.74Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 7,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\LoginDto.cs",
               "RelativeDocumentMoniker": "Models\\User\\LoginDto.cs",
@@ -216,59 +143,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SessionMiddleware.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs",
-              "RelativeDocumentMoniker": "Middleware\\SessionMiddleware.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs",
-              "RelativeToolTip": "Middleware\\SessionMiddleware.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:47:12.546Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "DbContext.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Data\\DbContext.cs",
-              "RelativeDocumentMoniker": "Data\\DbContext.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Data\\DbContext.cs",
-              "RelativeToolTip": "Data\\DbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T09:53:06.057Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "RegistrationController.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs",
-              "RelativeDocumentMoniker": "Controllers\\RegistrationController.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\RegistrationController.cs",
-              "RelativeToolTip": "Controllers\\RegistrationController.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAAAB0AAAAMAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-26T20:49:08.658Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
-              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "Controllers\\AuthController.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAAAC0AAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-27T07:44:11.576Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 4,
               "Title": "IPasswordHasherService.cs",
               "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IPasswordHasherService.cs",
               "RelativeDocumentMoniker": "Services\\IPasswordHasherService.cs",
@@ -281,7 +156,93 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 10,
+              "Title": "UserDtos.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\UserDtos.cs",
+              "RelativeDocumentMoniker": "Models\\User\\UserDtos.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\UserDtos.cs",
+              "RelativeToolTip": "Models\\User\\UserDtos.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T21:18:11.109Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CookieService.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\CookieService.cs",
+              "RelativeDocumentMoniker": "Services\\CookieService.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\CookieService.cs",
+              "RelativeToolTip": "Services\\CookieService.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAB0AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-27T07:46:48.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Statistic.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\Statistic.cs",
+              "RelativeDocumentMoniker": "Models\\Statistic.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\Statistic.cs",
+              "RelativeToolTip": "Models\\Statistic.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T10:18:56.423Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SessionMiddleware.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs",
+              "RelativeDocumentMoniker": "Middleware\\SessionMiddleware.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Middleware\\SessionMiddleware.cs",
+              "RelativeToolTip": "Middleware\\SessionMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-27T07:47:12.546Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs",
+              "RelativeDocumentMoniker": "Services\\IAuthService.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Services\\IAuthService.cs",
+              "RelativeToolTip": "Services\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-27T07:46:08.416Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User\\User.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Models\\User\\User.cs",
+              "RelativeToolTip": "Models\\User\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-27T07:44:47.943Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "DbContext.cs",
+              "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Data\\DbContext.cs",
+              "RelativeDocumentMoniker": "Data\\DbContext.cs",
+              "ToolTip": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\Data\\DbContext.cs",
+              "RelativeToolTip": "Data\\DbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T09:53:06.057Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -289,12 +250,11 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-11-25T10:01:56.425Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T10:01:56.425Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 13,
               "Title": "BackendSite.csproj",
               "DocumentMoniker": "D:\\tomskiye_molochniki\\site_backend\\BackendSite\\BackendSite.csproj",
               "RelativeDocumentMoniker": "BackendSite.csproj",
@@ -302,8 +262,7 @@
               "RelativeToolTip": "BackendSite.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-11-25T09:36:32.077Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-11-25T09:36:32.077Z"
             }
           ]
         }

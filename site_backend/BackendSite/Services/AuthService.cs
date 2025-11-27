@@ -22,7 +22,7 @@ namespace BackendSite.Services
                 .FirstOrDefaultAsync(u => u.Login == login);
 
             if (user == null)
-                return (null, "Неверный логин или пароль");
+                return (null, "Пользователя с таким Логином не существует");
 
             if (!_passwordHasher.VerifyPassword(password, user.PasswordHash))
                 return (null, "Неверный логин или пароль");

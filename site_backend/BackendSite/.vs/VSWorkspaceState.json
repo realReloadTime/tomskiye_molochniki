@@ -8,6 +8,6 @@
     "\\Models\\User",
     "\\Services"
   ],
-  "SelectedNode": "\\Program.cs",
+  "SelectedNode": "\\Controllers\\AuthController.cs",
   "PreviewInSolutionExplorer": false
 }
