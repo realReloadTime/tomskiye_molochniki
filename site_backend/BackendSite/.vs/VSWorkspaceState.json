@@ -1,9 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\Controllers",
     "\\Data",
-    "\\Models"
+    "\\Middleware",
+    "\\Models",
+    "\\Models\\User",
+    "\\Services"
   ],
-  "SelectedNode": "\\Data\\DbContext.cs",
+  "SelectedNode": "\\Controllers\\AuthController.cs",
   "PreviewInSolutionExplorer": false
 }

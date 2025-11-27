@@ -72,6 +72,12 @@ namespace BackendSite.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("SessionExpires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SessionToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
