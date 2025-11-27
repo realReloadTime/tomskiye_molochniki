@@ -162,6 +162,6 @@ if __name__ == "__main__":
     # csv_bytes = sample_data.encode('utf-8')
     #
     # # Обрабатываем
-    # result = process_toxicity_csv(csv_bytes)
+    # result = process_toxicity_csv(csv_bytes, model, vectorizer)
     # print("\nРезультаты:")
     # print(result.head(10))
