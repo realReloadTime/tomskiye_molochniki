@@ -1,0 +1,19 @@
+.home .demo-section {
+  text-align: center;
+  margin: 24px 0;
+}
+
+.home .demo-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.home .demo-btn:hover {
+  background: #4f46e5;
+}
