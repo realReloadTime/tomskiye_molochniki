@@ -20,6 +20,7 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 import seaborn as sns
 import joblib
+from imblearn.over_sampling import SMOTE
 
 import nltk
 from nltk.stem.snowball import SnowballStemmer
@@ -94,7 +95,7 @@ class SimpleNN(nn.Module):
         self.fc4 = nn.Linear(hidden_size // 4, num_classes)
 
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.5)  # Увеличиваем dropout для борьбы с переобучением
+        self.dropout = nn.Dropout(0.8)
         self.sigmoid = nn.Sigmoid()
 
     def forward(self, x):
@@ -183,10 +184,8 @@ def calculate_f1(predictions, labels):
 
 
 def train_nn(data: pd.DataFrame):
-    """Улучшенное обучение с правильным разделением на train/val/test"""
     start_time = time.time()
 
-    # Предобработка
     print("Calculating uppercase rates...")
     data['upcase_rate'] = list(map(upper_case_rate, data.comment.values))
     text = np.array(data.comment.values)
@@ -195,15 +194,11 @@ def train_nn(data: pd.DataFrame):
     print("Starting parallel text cleaning...")
     text = clean_texts_parallel(text.tolist())
 
-    preprocessing_time = time.time() - start_time
-    print(f"Text preprocessing completed in {preprocessing_time:.2f} seconds")
-
-    # ПРАВИЛЬНОЕ РАЗДЕЛЕНИЕ ДАННЫХ: 60% train, 20% validation, 20% test
     X_temp, X_test, y_temp, y_test = train_test_split(
-        text, target, test_size=0.2, stratify=target, shuffle=True, random_state=0
+        text, target, test_size=0.2, stratify=target, random_state=0
     )
     X_train, X_val, y_train, y_val = train_test_split(
-        X_temp, y_temp, test_size=0.25, stratify=y_temp, shuffle=True, random_state=0  # 0.25 * 0.8 = 0.2
+        X_temp, y_temp, test_size=0.25, stratify=y_temp, random_state=0
     )
 
     print('Data split:')
@@ -211,16 +206,22 @@ def train_nn(data: pd.DataFrame):
     print(f'Val: {len(X_val)} \tTarget rate: {y_val.mean() * 100:.2f}%')
     print(f'Test: {len(X_test)} \tTarget rate: {y_test.mean() * 100:.2f}%')
 
-    # Векторизация
+    # Векторизация ТОЛЬКО на train данных
     print("Vectorizing texts...")
-    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))  # Добавляем биграммы
+    vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
+
+    # SMOTE ТОЛЬКО на тренировочных данных
+    smote = SMOTE(random_state=42, sampling_strategy=0.5)
+    X_train_vec, y_train = smote.fit_resample(X_train_vec, y_train)
+
+    # Валидация и тест - БЕЗ SMOTE
     X_val_vec = vectorizer.transform(X_val).toarray()
     X_test_vec = vectorizer.transform(X_test).toarray()
 
+    print(f"After SMOTE - Train: {len(X_train_vec)}, Target rate: {y_train.mean() * 100:.2f}%")
     print(f"Feature dimension: {X_train_vec.shape[1]}")
 
-    # Сохраняем векторизатор для будущего использования
     joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')
 
     # DataLoader
@@ -366,15 +367,12 @@ def train_nn(data: pd.DataFrame):
             print(f"Early stopping triggered after {epoch + 1} epochs")
             break
 
-    # Загружаем лучшую модель для тестирования
     checkpoint = torch.load('best_model.pth')
     model.load_state_dict(checkpoint['model_state_dict'])
     print(f"Loaded best model from epoch {checkpoint['epoch'] + 1} with Val F1: {checkpoint['val_f1']:.4f}")
 
-    # ВИЗУАЛИЗАЦИЯ
     plot_training_history(history)
 
-    # ТЕСТИРОВАНИЕ НА TEST SET (только один раз!)
     print("\n" + "=" * 60)
     print("FINAL TESTING ON TEST SET")
     print("=" * 60)
@@ -440,7 +438,6 @@ def train_nn(data: pd.DataFrame):
 
     print(f"\nROC AUC Score: {roc_auc:.4f}")
 
-    # Сохраняем финальную модель
     torch.save(model.state_dict(), 'final_toxicity_model.pth')
     print("Final model saved as 'final_toxicity_model.pth'")
 
