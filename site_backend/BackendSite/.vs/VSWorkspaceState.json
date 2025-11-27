@@ -3,6 +3,7 @@
     "",
     "\\Controllers",
     "\\Data",
+    "\\Middleware",
     "\\Models",
     "\\Models\\User",
     "\\Services"
