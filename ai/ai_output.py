@@ -97,31 +97,24 @@ def predict_toxicity_with_probability(text: str, model, vectorizer, device='cpu'
     return text, class_label, probability
 
 
-def process_toxicity_csv(csv_bytes: bytes, model, vectorizer, device='cpu') -> pd.DataFrame:
+def process_toxicity_csv(df: pd.DataFrame, model, vectorizer, device='cpu') -> pd.DataFrame:
     """
     Обрабатывает CSV-файл с комментариями и возвращает результат с классификацией
 
     Args:
-        csv_bytes (bytes): Байтовый поток CSV-файла с колонкой 'comment'
+        df (pandas DataFrame): DataFrame комментариев с колонкой 'comment'
 
     Returns:
         pd.DataFrame: Датафрейм с колонками ['comment', 'class', 'prob']
     """
-
-    # Чтение CSV
-    df = pd.read_csv(csv_bytes)
 
     if 'comment' not in df.columns:
         raise ValueError("CSV file must contain 'comment' column")
 
     texts = df['comment'].fillna('').astype(str).tolist()
 
-    # Быстрая очистка текстов
-    print("Cleaning texts...")
     cleaned_texts = clean_texts_fast(texts)
 
-    # Предсказание
-    print("Predicting toxicity...")
     predictions, probabilities = predict_batch(
         cleaned_texts, model, vectorizer, device
     )

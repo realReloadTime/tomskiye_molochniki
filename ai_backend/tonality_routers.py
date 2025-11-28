@@ -19,6 +19,4 @@ async def analyze_file(
     file: UploadFile = File(...),
     service: CommentService = Depends(get_service)
 ):
-    content = await file.read()
-    df = await service.analyze_file(content)
-    return df.to_dict(orient="records")
+    return await service.analyze_file(await file.read())
