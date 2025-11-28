@@ -1,20 +1,22 @@
-export default function Navbar({ active, onChange }) {
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+export default function Navbar() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <nav className="navbar">
-      <div className="nav-brand">ReviewAnalyzer</div>
+      <div className="nav-brand" onClick={() => navigate('/')}>
+        ReviewAnalyzer
+      </div>
+
       <div className="nav-links">
-        <button
-          className={active === 'home' ? 'active' : ''}
-          onClick={() => onChange('home')}
-        >
-          Анализ
-        </button>
-        <button
-          className={active === 'profile' ? 'active' : ''}
-          onClick={() => onChange('profile')}
-        >
-          Кабинет
-        </button>
+        {user ? (
+          <button onClick={() => navigate('/profile')}>Профиль</button>
+        ) : (
+          <button onClick={() => navigate('/login')}>Войти</button>
+        )}
       </div>
     </nav>
   );

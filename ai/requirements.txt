@@ -11,3 +11,4 @@ aiofiles
 matplotlib
 tqdm
 seaborn
+imblearn
