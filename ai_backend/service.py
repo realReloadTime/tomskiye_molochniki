@@ -18,17 +18,22 @@ class CommentService:
                              probability=probability,
                              created_date=datetime.now(UTC))
 
-    async def analyze_file(self, file_bytes: bytes):
-        opened_file = io.BytesIO(file_bytes)
-        encoding = chardet.detect(file_bytes)
-        got_df = pd.read_csv(opened_file, encoding=encoding['encoding'], encoding_errors="ignore", delimiter="^$^#$@&*!")
+    async def analyze_file(self, file_bytes: bytes) -> bytes | None:
+        try:
+            opened_file = io.BytesIO(file_bytes)
+            encoding = chardet.detect(file_bytes)
+            got_df = pd.read_csv(opened_file, encoding=encoding['encoding'], delimiter="^$^#$@&*!")
 
-        df = process_toxicity_csv(got_df, model, vectorizer)
+            df = process_toxicity_csv(got_df, model, vectorizer)
 
-        curr_time = str(datetime.now(UTC).timestamp()).replace(".", "-")
-        df.to_csv(curr_time + ".csv", index=False)
-        df.to_csv(f"temp_response_{curr_time}.csv", index = False)
-        new_file_bytes = open(f"temp_response_{curr_time}.csv", mode="rb").read()
+            curr_time = str(datetime.now(UTC).timestamp()).replace(".", "-")
+            df.to_csv(curr_time + ".csv", index=False)
+            df.to_csv(f"temp_response_{curr_time}.csv", index = False)
+            new_file_bytes = open(f"temp_response_{curr_time}.csv", mode="rb").read()
 
-        os.remove(f"temp_response_{curr_time}.csv")
-        return new_file_bytes
+            os.remove(f"temp_response_{curr_time}.csv")
+            return new_file_bytes
+
+        except Exception:
+            print('ai_backend/service.py error in def analyze_file')
+            return None
