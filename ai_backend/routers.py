@@ -3,23 +3,20 @@ from sqlalchemy.orm import Session
 from ai_backend.service import CommentService
 from repository import CommentRepository
 
-router = APIRouter(prefix="/tonalnost", tags=["tonalnost"])
+router = APIRouter(prefix="/tonality", tags=["tonality"])
 
-def get_repo(db: Session = Depends(get_db)) -> CommentRepository:
-    return CommentRepository(db)
+def get_service() -> CommentService:
+    return CommentService()
 
-def get_service(repo: CommentRepository = Depends(get_repo)) -> CommentService:
-    return CommentService(repo)
-
-@router.post("/analyze-text")
-def analyze_text(
+@router.post("/text")
+async def analyze_text(
     text: str = Form(...),
     service: CommentService = Depends(get_service)
 ):
     tonal = service.analyze_text(text)
     return {"text": text, "tonalnost": tonal}
 
-@router.post("/analyze-file")
+@router.post("/file")
 async def analyze_file(
     file: UploadFile = File(...),
     service: CommentService = Depends(get_service)
