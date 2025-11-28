@@ -2,8 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 class CommentSchema(BaseModel):
-    # id: int
-    text: str
-    tonalnost: str
+    comment: str
+    class_label: float
+    probability: float
     created_date: datetime
-

@@ -1,20 +1,18 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends
-from sqlalchemy.orm import Session
 from ai_backend.service import CommentService
-from repository import CommentRepository
+from ai_backend.schemas import CommentSchema
 
 router = APIRouter(prefix="/tonality", tags=["tonality"])
 
 def get_service() -> CommentService:
     return CommentService()
 
-@router.post("/text")
+@router.post("/text", response_model=CommentSchema)
 async def analyze_text(
     text: str = Form(...),
     service: CommentService = Depends(get_service)
 ):
-    tonal = service.analyze_text(text)
-    return {"text": text, "tonalnost": tonal}
+    return await service.analyze_text(text)
 
 @router.post("/file")
 async def analyze_file(
@@ -22,5 +20,5 @@ async def analyze_file(
     service: CommentService = Depends(get_service)
 ):
     content = await file.read()
-    df = service.analyze_file(content)
+    df = await service.analyze_file(content)
     return df.to_dict(orient="records")

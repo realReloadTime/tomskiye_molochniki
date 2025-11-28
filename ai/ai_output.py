@@ -4,8 +4,11 @@ import pandas as pd
 import numpy as np
 import multiprocessing as mp
 from joblib.externals.loky import ProcessPoolExecutor
+import os
 
 from ai.make_n_train_ai import SimpleNN, clean_text
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def process_text_batch(texts_batch):
@@ -64,19 +67,19 @@ def load_toxicity_model(input_size=5000):
     :arg input_size: должен совпадать с размерностью векторизатора"""
 
     # Загружаем векторизатор
-    vectorizer = joblib.load('tfidf_vectorizer.pkl')
+    vectorizer = joblib.load(current_dir + '\\' + 'tfidf_vectorizer.pkl')
 
     # Загружаем архитектуру модели
     model = SimpleNN(input_size=input_size, hidden_size=512)
 
     # Загружаем веса модели
-    model.load_state_dict(torch.load('final_toxicity_model.pth', map_location='cpu'))
+    model.load_state_dict(torch.load(current_dir + '\\' + 'final_toxicity_model.pth', map_location='cpu'))
     model.eval()  # переводим модель в режим оценки
 
     return model, vectorizer
 
 
-def predict_toxicity_with_probability(text: str, model, vectorizer, device='cpu') -> tuple:
+def predict_toxicity_with_probability(text: str, model, vectorizer, device='cpu') -> tuple[str, float, float]:
     """
     Предсказывает токсичность с вероятностью
 
@@ -91,7 +94,7 @@ def predict_toxicity_with_probability(text: str, model, vectorizer, device='cpu'
         probability = model(text_tensor).squeeze().item()
 
     class_label = 1 if probability > 0.5 else 0
-    return class_label, probability
+    return text, class_label, probability
 
 
 def process_toxicity_csv(csv_bytes: bytes, model, vectorizer, device='cpu') -> pd.DataFrame:
@@ -125,8 +128,8 @@ def process_toxicity_csv(csv_bytes: bytes, model, vectorizer, device='cpu') -> p
 
     result_df = pd.DataFrame({
         'comment': df['comment'],
-        'class': predictions,
-        'prob': probabilities
+        'class_label': predictions,
+        'probability': probabilities
     })
 
     return result_df
