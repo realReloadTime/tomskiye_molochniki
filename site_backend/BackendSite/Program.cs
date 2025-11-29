@@ -18,7 +18,9 @@ builder.Services.AddDbContext<ReviewsHackatonDBContext>(options =>
 builder.Services.AddScoped<IPasswordHasherService, PasswordHasherService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<IAnalysisService, AnalysisService>();
 builder.Services.AddHttpContextAccessor();
+
 
 builder.Services.AddCors(options =>
 {

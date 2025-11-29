@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BackendSite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5d0eb06755c7e18622abaad7af3a870f87cc1327")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9a9ecacbec86bb56d443e1184e2bde77a5b243af")]
 [assembly: System.Reflection.AssemblyProductAttribute("BackendSite")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BackendSite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
