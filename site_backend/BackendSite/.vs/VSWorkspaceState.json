@@ -9,6 +9,6 @@
     "\\Models\\User",
     "\\Services"
   ],
-  "SelectedNode": "\\Models\\Analysis\\AnalysisDto.cs",
+  "SelectedNode": "\\Services\\AnalysisService.cs",
   "PreviewInSolutionExplorer": false
 }
