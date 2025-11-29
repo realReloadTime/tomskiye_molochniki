@@ -51,7 +51,7 @@ export default function UploadForm({ onResult }) {
 
       } else if (hasFile && !hasText) {
         const uploadData = new FormData();
-        uploadData.append('file', file);
+        uploadData.append('csvFile', file);
 
         const response = await fetch(`${API_URL}/Analysis/analyze-file`, {
           method: 'POST',
