@@ -15,6 +15,8 @@ namespace BackendSite.Controllers
             _httpClient = httpClientFactory.CreateClient("PythonBackend");
         }
 
+
+        
         [HttpPost("analyze")]
         public async Task<IActionResult> AnalyzeText([FromForm] string review)
         {
@@ -30,7 +32,15 @@ namespace BackendSite.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
+                    var rawJson = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"RAW JSON FROM PYTHON: {rawJson}");
+
                     var result = await response.Content.ReadFromJsonAsync<AnalysisResultDto>();
+
+                    
+                    Console.WriteLine($"PARSED IN .NET: class_label={result.class_label}, probability={result.probability}");
+                    Console.WriteLine($"FOR TEXT: '{review}'");
+
                     return Ok(result);
                 }
 

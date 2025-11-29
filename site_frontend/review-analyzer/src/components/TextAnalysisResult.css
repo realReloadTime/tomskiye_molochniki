@@ -167,3 +167,12 @@
   overflow-x: auto;
   margin: 10px 0;
 }
+
+
+.verdict.positive { color: #22c55e; }
+.verdict.neutral { color: #eab308; }
+.verdict.negative { color: #ef4444; }
+
+.confidence-fill.positive { background: #22c55e; }
+.confidence-fill.neutral { background: #eab308; }
+.confidence-fill.negative { background: #ef4444; }

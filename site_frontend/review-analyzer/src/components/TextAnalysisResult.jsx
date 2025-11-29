@@ -1,10 +1,29 @@
-import './TextAnalysisResult.css'; // стили для красивого отображения
+import './TextAnalysisResult.css';
 
 export default function TextAnalysisResult({ result }) {
   if (!result) return null;
 
-  const isToxic = result.classLabel === 1;
-  const confidence = (result.probability * 100).toFixed(2);
+
+  console.log('TextAnalysisResult received:', result);
+
+  
+  const classLabel = result.class_label !== undefined ? result.class_label : result.classLabel;
+  const probability = result.probability;
+
+  console.log('Normalized classLabel:', classLabel);
+
+  const getToneInfo = (classLabel) => {
+    console.log('getToneInfo called with:', classLabel);
+    switch(classLabel) {
+      case 0: return { text: '🟢 Позитивный', className: 'positive' };
+      case 1: return { text: '🟡 Нейтральный', className: 'neutral' };
+      case 2: return { text: '🔴 Негативный', className: 'negative' };
+      default: return { text: '❓ Неизвестно', className: 'unknown' };
+    }
+  };
+
+  const toneInfo = getToneInfo(classLabel);
+  const confidence = Math.round(probability);
   
   return (
     <div className="analysis-modal">
@@ -21,9 +40,9 @@ export default function TextAnalysisResult({ result }) {
           
           <div className="result-section">
             <div className="verdict-item">
-              <span className="label">🏷️ Вердикт:</span>
-              <span className={`verdict ${isToxic ? 'toxic' : 'non-toxic'}`}>
-                {isToxic ? '🔴 Токсичный' : '🟢 Нетоксичный'}
+              <span className="label">🏷️ Тональность:</span>
+              <span className={`verdict ${toneInfo.className}`}>
+                {toneInfo.text}
               </span>
             </div>
             
@@ -32,7 +51,7 @@ export default function TextAnalysisResult({ result }) {
               <div className="confidence-container">
                 <div className="confidence-bar">
                   <div 
-                    className={`confidence-fill ${confidence > 70 ? 'high' : confidence > 40 ? 'medium' : 'low'}`}
+                    className={`confidence-fill ${toneInfo.className}`}
                     style={{ width: `${confidence}%` }}
                   ></div>
                 </div>
