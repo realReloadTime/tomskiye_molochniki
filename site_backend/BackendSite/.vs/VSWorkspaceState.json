@@ -5,9 +5,10 @@
     "\\Data",
     "\\Middleware",
     "\\Models",
+    "\\Models\\Analysis",
     "\\Models\\User",
     "\\Services"
   ],
-  "SelectedNode": "\\Controllers\\AnalysisController.cs",
+  "SelectedNode": "\\Models\\Analysis\\AnalysisDto.cs",
   "PreviewInSolutionExplorer": false
 }
