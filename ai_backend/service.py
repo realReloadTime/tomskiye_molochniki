@@ -1,14 +1,21 @@
 import io
-
-from ai.ai_output import load_toxicity_model, process_toxicity_csv, predict_toxicity_with_probability
-from ai_backend.schemas import CommentSchema
-from datetime import datetime, UTC
+import sys
 import os
+
+# Добавляем путь к папке ai
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
+
+# ПРЯМОЙ импорт без ai.
+from ai_output import load_toxicity_model, process_toxicity_csv, predict_toxicity_with_probability
+
+# ПРЯМОЙ импорт без ai_backend.
+from schemas import CommentSchema
+
+from datetime import datetime, UTC
 import pandas as pd
 import chardet
 
 model, vectorizer = load_toxicity_model()
-
 
 class CommentService:
     async def analyze_text(self, text: str) -> CommentSchema:

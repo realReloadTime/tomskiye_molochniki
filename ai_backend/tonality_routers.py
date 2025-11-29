@@ -1,6 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, Form, Depends
-from ai_backend.service import CommentService
-from ai_backend.schemas import CommentSchema
+from service import CommentService  # ← прямой импорт
+from schemas import CommentSchema
 
 router = APIRouter(prefix="/tonality", tags=["tonality"])
 

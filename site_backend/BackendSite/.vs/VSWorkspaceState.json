@@ -8,6 +8,6 @@
     "\\Models\\User",
     "\\Services"
   ],
-  "SelectedNode": "\\Services\\CookieService.cs",
+  "SelectedNode": "\\Models\\AnalysisDto.cs",
   "PreviewInSolutionExplorer": false
 }

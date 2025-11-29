@@ -6,7 +6,7 @@ import multiprocessing as mp
 from joblib.externals.loky import ProcessPoolExecutor
 import os
 
-from ai.make_n_train_ai import SimpleNN, clean_text
+from make_n_train_ai import SimpleNN, clean_text
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
