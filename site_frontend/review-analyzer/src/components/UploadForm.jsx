@@ -27,19 +27,22 @@ export default function UploadForm({ onResult }) {
 
     try {
       if (hasText && !hasFile) {
+        // Анализ текста
+        const textFormData = new FormData();
+        textFormData.append('review', review);
+
         const response = await fetch(`${API_URL}/Analysis/analyze`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ comment: review }),
+          body: textFormData,
         });
 
         if (response.ok) {
           const data = await response.json();
           const normalizedData = {
             comment: data.comment || review,
-            classLabel: data.classLabel || data.class_label,
+            classLabel: data.class_label !== undefined ? data.class_label : data.classLabel,
             probability: data.probability,
-            createdDate: data.createdDate || data.created_date,
+            createdDate: data.created_date || data.createdDate,
             type: 'text'
           };
           setResult(normalizedData);
@@ -50,20 +53,21 @@ export default function UploadForm({ onResult }) {
         }
 
       } else if (hasFile && !hasText) {
-        const uploadData = new FormData();
-        uploadData.append('csvFile', file);
+        // Анализ файла
+        const fileFormData = new FormData();
+        fileFormData.append('csvFile', file); // ВАЖНО: имя поля 'csvFile'
 
         const response = await fetch(`${API_URL}/Analysis/analyze-file`, {
           method: 'POST',
-          body: uploadData,
+          body: fileFormData,
         });
 
         if (response.ok) {
           const data = await response.json();
           const normalizedData = {
-            totalRecords: data.totalRecords,
-            positiveCount: data.positiveCount,
-            negativeCount: data.negativeCount,
+            totalRecords: data.totalRecords || 0,
+            positiveCount: data.positiveCount || 0,
+            negativeCount: data.negativeCount || 0,
             analysisDate: data.analysisDate,
             type: 'file'
           };
@@ -102,7 +106,7 @@ export default function UploadForm({ onResult }) {
         <div className="form-group">
           <label>Или загрузите файл</label>
           <input type="file" name="csvFile" accept=".csv" />
-          <small className="file-hint">Поддерживаются только CSV файлы</small>
+          <small className="file-hint">Поддерживаются только CSV файлы с колонкой 'comment'</small>
         </div>
 
         <button type="submit" disabled={loading}>
@@ -110,7 +114,7 @@ export default function UploadForm({ onResult }) {
         </button>
       </form>
 
-      {/* Модалки */}
+      {/* Модальные окна с результатами */}
       {result && result.type === 'text' && (
         <div className="modal-overlay" onClick={closeModal}>
           <TextAnalysisResult result={result} />

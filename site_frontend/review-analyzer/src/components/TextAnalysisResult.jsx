@@ -1,64 +1,72 @@
-import './TextAnalysisResult.css';
-
-export default function TextAnalysisResult({ result }) {
+export default function FileAnalysisResult({ result }) {
   if (!result) return null;
 
-
-  console.log('TextAnalysisResult received:', result);
-
-  
-  const classLabel = result.class_label !== undefined ? result.class_label : result.classLabel;
-  const probability = result.probability;
-
-  console.log('Normalized classLabel:', classLabel);
-
-  const getToneInfo = (classLabel) => {
-    console.log('getToneInfo called with:', classLabel);
-    switch(classLabel) {
-      case 0: return { text: '🟢 Позитивный', className: 'positive' };
-      case 1: return { text: '🟡 Нейтральный', className: 'neutral' };
-      case 2: return { text: '🔴 Негативный', className: 'negative' };
-      default: return { text: '❓ Неизвестно', className: 'unknown' };
-    }
-  };
-
-  const toneInfo = getToneInfo(classLabel);
-  const confidence = Math.round(probability);
+  // Добавьте проверку на наличие records
+  const records = result.records || [];
   
   return (
-    <div className="analysis-modal">
+    <div className="file-analysis-modal">
       <div className="modal-content">
         <div className="modal-header">
-          <h2>🎯 Результат анализа тональности</h2>
+          <h2>📊 Результат анализа файла</h2>
         </div>
         
         <div className="modal-body">
-          <div className="text-section">
-            <div className="section-title">📝 Анализируемый текст:</div>
-            <div className="text-bubble">"{result.comment}"</div>
+          <div className="file-info">
+            {/* УБРАТЬ fileName - его нет в ответе бэкенда */}
+            <p><strong>📈 Всего записей:</strong> {result.totalRecords || 0}</p>
+            <p><strong>🟢 Позитивных:</strong> {result.positiveCount || 0}</p>
+            <p><strong>🔴 Негативных:</strong> {result.negativeCount || 0}</p>
+            <p><strong>📅 Дата анализа:</strong> {result.analysisDate ? new Date(result.analysisDate).toLocaleString() : 'Не указана'}</p>
           </div>
-          
-          <div className="result-section">
-            <div className="verdict-item">
-              <span className="label">🏷️ Тональность:</span>
-              <span className={`verdict ${toneInfo.className}`}>
-                {toneInfo.text}
-              </span>
-            </div>
-            
-            <div className="confidence-item">
-              <span className="label">📊 Уверенность:</span>
-              <div className="confidence-container">
-                <div className="confidence-bar">
-                  <div 
-                    className={`confidence-fill ${toneInfo.className}`}
-                    style={{ width: `${confidence}%` }}
-                  ></div>
-                </div>
-                <span className="confidence-text">{confidence}%</span>
+
+          {/* Показываем таблицу только если есть records */}
+          {records.length > 0 && (
+            <div className="records-list">
+              <h4>Детали анализа:</h4>
+              <div className="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Текст</th>
+                      <th>Вердикт</th>
+                      <th>Уверенность</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {records.slice(0, 10).map((record, index) => (
+                      <tr key={index}>
+                        <td className="text-cell">
+                          {record.comment?.length > 100 
+                            ? record.comment.substring(0, 100) + '...' 
+                            : record.comment
+                          }
+                        </td>
+                        <td className={record.classLabel === 1 ? 'toxic' : 'non-toxic'}>
+                          {record.classLabel === 1 ? '🔴 Токсичный' : '🟢 Нетоксичный'}
+                        </td>
+                        <td className="confidence">
+                          {((record.probability || 0) * 100).toFixed(2)}%
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {records.length > 10 && (
+                  <p className="more-records">
+                    ... и еще {records.length - 10} записей
+                  </p>
+                )}
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Сообщение если records нет */}
+          {records.length === 0 && (
+            <div className="no-records">
+              <p>Детальная информация по записям недоступна</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
