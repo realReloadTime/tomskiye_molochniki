@@ -1,45 +1,30 @@
-
 import io
 import sys
 import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ai'))
 
-from ai_output import load_toxicity_model, process_toxicity_csv, predict_toxicity_with_probability
+from ai.ai_output import load_reviews_model, process_sentiment_csv, predict_sentiment_with_probability
 from schemas import CommentSchema
 
 from datetime import datetime, UTC
 import pandas as pd
 import chardet
 
-model, vectorizer = load_toxicity_model()
+model, vectorizer = load_reviews_model()
 
 
 class CommentService:
     async def analyze_text(self, text: str) -> CommentSchema:
        
-        comment, class_label, probability = predict_toxicity_with_probability(text, model, vectorizer)
+        comment, label, probability, total_probs = predict_sentiment_with_probability(text, model, vectorizer)
         
-        print(f"DEBUG: Original prediction - prob={probability}, class={class_label}")
-       
-        if probability < 0.4:
-            tone_class = 0  # позитивный
-            tone_probability = (0.4 - probability) / 0.4 * 100
-        elif probability > 0.6:
-            tone_class = 2  # негативный  
-            tone_probability = (probability - 0.6) / 0.4 * 100
-        else:
-            tone_class = 1  # нейтральный
-            tone_probability = 50
-        
-        tone_probability = max(0, min(100, tone_probability))
-        
-       
+        print(f"DEBUG: Original prediction - prob={probability}, class={label}")
         
         return CommentSchema(
             comment=comment,
-            class_label=tone_class,  
-            probability=tone_probability,
+            class_label=label,
+            probability=probability,
             created_date=datetime.now(UTC)
         )
 
@@ -49,7 +34,7 @@ class CommentService:
             encoding = chardet.detect(file_bytes)
             got_df = pd.read_csv(opened_file, encoding=encoding['encoding'], delimiter="^$^#$@&*!")
 
-            df = process_toxicity_csv(got_df, model, vectorizer)
+            df = process_sentiment_csv(got_df, model, vectorizer)
 
             curr_time = str(datetime.now(UTC).timestamp()).replace(".", "-")
             df.to_csv(curr_time + ".csv", index=False)
