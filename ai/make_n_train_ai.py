@@ -7,7 +7,6 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.svm import LinearSVC
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import metrics
@@ -81,22 +80,19 @@ def clean_texts_parallel(texts, num_processes=None):
 
 
 class SimpleNN(nn.Module):
-    """Улучшенная нейронная сеть для классификации"""
-
-    def __init__(self, input_size, hidden_size=256, num_classes=1):
+    def __init__(self, input_size, hidden_size=256, num_classes=3):
         super(SimpleNN, self).__init__()
-        # Увеличиваем capacity сети
         self.fc1 = nn.Linear(input_size, hidden_size)
-        self.bn1 = nn.BatchNorm1d(hidden_size)  # BatchNorm для стабилизации обучения
+        self.bn1 = nn.BatchNorm1d(hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size // 2)
         self.bn2 = nn.BatchNorm1d(hidden_size // 2)
         self.fc3 = nn.Linear(hidden_size // 2, hidden_size // 4)
         self.bn3 = nn.BatchNorm1d(hidden_size // 4)
-        self.fc4 = nn.Linear(hidden_size // 4, num_classes)
+        self.fc4 = nn.Linear(hidden_size // 4, num_classes)  # 3 выходных нейрона
 
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.8)
-        self.sigmoid = nn.Sigmoid()
+        self.dropout = nn.Dropout(0.4)
+        self.softmax = nn.Softmax(dim=1)  # Softmax для многоклассовой классификации
 
     def forward(self, x):
         x = self.fc1(x)
@@ -115,7 +111,7 @@ class SimpleNN(nn.Module):
         x = self.dropout(x)
 
         x = self.fc4(x)
-        x = self.sigmoid(x)
+        x = self.softmax(x)
         return x
 
 
@@ -132,7 +128,7 @@ class TextDataset(Dataset):
 
 
 def plot_training_history(history):
-    """Улучшенная визуализация обучения"""
+    """Улучшенная визуализация обучения для многоклассовой классификации"""
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
 
     # График потерь
@@ -153,10 +149,10 @@ def plot_training_history(history):
     ax2.legend()
     ax2.grid(True, alpha=0.3)
 
-    # График F1-score
-    ax3.plot(history['train_f1'], label='Training F1', linewidth=2)
-    ax3.plot(history['val_f1'], label='Validation F1', linewidth=2)
-    ax3.set_title('Training and Validation F1-Score', fontsize=14)
+    # График F1-score (macro average)
+    ax3.plot(history['train_f1_macro'], label='Training F1 Macro', linewidth=2)
+    ax3.plot(history['val_f1_macro'], label='Validation F1 Macro', linewidth=2)
+    ax3.set_title('Training and Validation F1-Score (Macro)', fontsize=14)
     ax3.set_xlabel('Epoch')
     ax3.set_ylabel('F1-Score')
     ax3.legend()
@@ -172,24 +168,27 @@ def plot_training_history(history):
     ax4.grid(True, alpha=0.3)
 
     plt.tight_layout()
-    plt.savefig('training_history_detailed.png', dpi=150, bbox_inches='tight')
+    plt.savefig('training_history_reviews.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 
-def calculate_f1(predictions, labels):
-    """Вычисление F1-score"""
-    predictions_binary = (predictions > 0.5).float()
-    f1 = metrics.f1_score(labels.cpu().numpy(), predictions_binary.cpu().numpy())
-    return f1
+def calculate_multiclass_metrics(predictions, labels):
+    """Вычисление метрик для многоклассовой классификации"""
+    predictions_classes = torch.argmax(predictions, dim=1)
+    accuracy = metrics.accuracy_score(labels.cpu().numpy(), predictions_classes.cpu().numpy())
+    f1_macro = metrics.f1_score(labels.cpu().numpy(), predictions_classes.cpu().numpy(), average='macro')
+    f1_weighted = metrics.f1_score(labels.cpu().numpy(), predictions_classes.cpu().numpy(), average='weighted')
+
+    return accuracy, f1_macro, f1_weighted
 
 
 def train_nn(data: pd.DataFrame):
     start_time = time.time()
 
     print("Calculating uppercase rates...")
-    data['upcase_rate'] = list(map(upper_case_rate, data.comment.values))
-    text = np.array(data.comment.values)
-    target = data.toxic.astype(int).values
+    data['upcase_rate'] = list(map(upper_case_rate, data.text.values))
+    text = np.array(data.text.values)
+    target = data.label.astype(int).values  # Используем колонку label
 
     print("Starting parallel text cleaning...")
     text = clean_texts_parallel(text.tolist())
@@ -202,34 +201,43 @@ def train_nn(data: pd.DataFrame):
     )
 
     print('Data split:')
-    print(f'Train: {len(X_train)} \tTarget rate: {y_train.mean() * 100:.2f}%')
-    print(f'Val: {len(X_val)} \tTarget rate: {y_val.mean() * 100:.2f}%')
-    print(f'Test: {len(X_test)} \tTarget rate: {y_test.mean() * 100:.2f}%')
+    print(f'Train: {len(X_train)}')
+    print(f'Val: {len(X_val)}')
+    print(f'Test: {len(X_test)}')
+
+    # Распределение классов
+    print("\nClass distribution:")
+    for split_name, y_data in [("Train", y_train), ("Val", y_val), ("Test", y_test)]:
+        unique, counts = np.unique(y_data, return_counts=True)
+        print(f"{split_name}: {dict(zip(unique, counts))}")
 
     # Векторизация ТОЛЬКО на train данных
     print("Vectorizing texts...")
     vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     X_train_vec = vectorizer.fit_transform(X_train).toarray()
 
-    # SMOTE ТОЛЬКО на тренировочных данных
-    smote = SMOTE(random_state=42, sampling_strategy=0.5)
+    # SMOTE для многоклассовой классификации
+    smote = SMOTE(random_state=42, sampling_strategy='auto')  # auto балансирует все классы
     X_train_vec, y_train = smote.fit_resample(X_train_vec, y_train)
 
     # Валидация и тест - БЕЗ SMOTE
     X_val_vec = vectorizer.transform(X_val).toarray()
     X_test_vec = vectorizer.transform(X_test).toarray()
 
-    print(f"After SMOTE - Train: {len(X_train_vec)}, Target rate: {y_train.mean() * 100:.2f}%")
+    print(f"After SMOTE - Train: {len(X_train_vec)}")
+    unique, counts = np.unique(y_train, return_counts=True)
+    print(f"Class distribution after SMOTE: {dict(zip(unique, counts))}")
     print(f"Feature dimension: {X_train_vec.shape[1]}")
 
-    joblib.dump(vectorizer, 'tfidf_vectorizer.pkl')
+    joblib.dump(vectorizer, 'tfidf_vectorizer_reviews.pkl')
 
     # DataLoader
-    train_dataset = TextDataset(torch.FloatTensor(X_train_vec), torch.FloatTensor(y_train))
-    val_dataset = TextDataset(torch.FloatTensor(X_val_vec), torch.FloatTensor(y_val))
-    test_dataset = TextDataset(torch.FloatTensor(X_test_vec), torch.FloatTensor(y_test))
+    train_dataset = TextDataset(torch.FloatTensor(X_train_vec),
+                                torch.LongTensor(y_train))  # LongTensor для многоклассовой
+    val_dataset = TextDataset(torch.FloatTensor(X_val_vec), torch.LongTensor(y_val))
+    test_dataset = TextDataset(torch.FloatTensor(X_test_vec), torch.LongTensor(y_test))
 
-    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)  # Увеличиваем batch size
+    train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=128, shuffle=False)
     test_loader = DataLoader(test_dataset, batch_size=128, shuffle=False)
 
@@ -237,19 +245,18 @@ def train_nn(data: pd.DataFrame):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
 
-    model = SimpleNN(input_size=X_train_vec.shape[1], hidden_size=512)  # Увеличиваем hidden size
+    model = SimpleNN(input_size=X_train_vec.shape[1], hidden_size=512, num_classes=3)  # 3 класса
     model.to(device)
 
-    # Взвешенная функция потерь для борьбы с дисбалансом классов
-    pos_weight = torch.tensor([(len(y_train) - sum(y_train)) / sum(y_train)]).to(device)
-    criterion = nn.BCELoss(weight=pos_weight)
+    # CrossEntropyLoss для многоклассовой классификации
+    criterion = nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)  # AdamW + регуляризация
+    optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=2, factor=0.5)
 
     history = {
-        'train_loss': [], 'train_accuracy': [], 'train_f1': [],
-        'val_loss': [], 'val_accuracy': [], 'val_f1': [],
+        'train_loss': [], 'train_accuracy': [], 'train_f1_macro': [], 'train_f1_weighted': [],
+        'val_loss': [], 'val_accuracy': [], 'val_f1_macro': [], 'val_f1_weighted': [],
         'learning_rate': []
     }
 
@@ -264,8 +271,6 @@ def train_nn(data: pd.DataFrame):
         # Training
         model.train()
         train_loss = 0.0
-        train_correct = 0
-        train_total = 0
         all_train_preds = []
         all_train_labels = []
 
@@ -274,29 +279,23 @@ def train_nn(data: pd.DataFrame):
             features, labels = features.to(device), labels.to(device)
 
             optimizer.zero_grad()
-            outputs = model(features).squeeze()
+            outputs = model(features)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
 
             train_loss += loss.item()
-            predicted = (outputs > 0.5).float()
-            train_total += labels.size(0)
-            train_correct += (predicted == labels).sum().item()
 
-            all_train_preds.extend(outputs.detach())
-            all_train_labels.extend(labels.detach())
+            all_train_preds.append(outputs.detach())
+            all_train_labels.append(labels.detach())
 
             train_pbar.set_postfix({
-                'Loss': f'{loss.item():.4f}',
-                'Acc': f'{100. * train_correct / train_total:.2f}%'
+                'Loss': f'{loss.item():.4f}'
             })
 
         # Validation
         model.eval()
         val_loss = 0.0
-        val_correct = 0
-        val_total = 0
         all_val_preds = []
         all_val_labels = []
 
@@ -305,61 +304,63 @@ def train_nn(data: pd.DataFrame):
             for features, labels in val_pbar:
                 features, labels = features.to(device), labels.to(device)
 
-                outputs = model(features).squeeze()
+                outputs = model(features)
                 loss = criterion(outputs, labels)
 
                 val_loss += loss.item()
-                predicted = (outputs > 0.5).float()
-                val_total += labels.size(0)
-                val_correct += (predicted == labels).sum().item()
 
-                all_val_preds.extend(outputs)
-                all_val_labels.extend(labels)
+                all_val_preds.append(outputs)
+                all_val_labels.append(labels)
 
                 val_pbar.set_postfix({
-                    'Loss': f'{loss.item():.4f}',
-                    'Acc': f'{100. * val_correct / val_total:.2f}%'
+                    'Loss': f'{loss.item():.4f}'
                 })
 
         # Метрики
         avg_train_loss = train_loss / len(train_loader)
         avg_val_loss = val_loss / len(val_loader)
-        train_accuracy = 100. * train_correct / train_total
-        val_accuracy = 100. * val_correct / val_total
 
-        # Вычисляем F1 для обоих наборов
-        train_f1 = calculate_f1(torch.stack(all_train_preds), torch.stack(all_train_labels))
-        val_f1 = calculate_f1(torch.stack(all_val_preds), torch.stack(all_val_labels))
+        # Вычисляем метрики для train и val
+        train_preds = torch.cat(all_train_preds)
+        train_labels = torch.cat(all_train_labels)
+        train_accuracy, train_f1_macro, train_f1_weighted = calculate_multiclass_metrics(train_preds, train_labels)
+
+        val_preds = torch.cat(all_val_preds)
+        val_labels = torch.cat(all_val_labels)
+        val_accuracy, val_f1_macro, val_f1_weighted = calculate_multiclass_metrics(val_preds, val_labels)
 
         # Обновляем историю
         history['train_loss'].append(avg_train_loss)
         history['val_loss'].append(avg_val_loss)
         history['train_accuracy'].append(train_accuracy)
         history['val_accuracy'].append(val_accuracy)
-        history['train_f1'].append(train_f1)
-        history['val_f1'].append(val_f1)
+        history['train_f1_macro'].append(train_f1_macro)
+        history['val_f1_macro'].append(val_f1_macro)
+        history['train_f1_weighted'].append(train_f1_weighted)
+        history['val_f1_weighted'].append(val_f1_weighted)
         history['learning_rate'].append(optimizer.param_groups[0]['lr'])
 
-        # Early Stopping по F1 на валидации
-        if val_f1 > best_val_f1:
-            best_val_f1 = val_f1
+        # Early Stopping по F1 macro на валидации
+        if val_f1_macro > best_val_f1:
+            best_val_f1 = val_f1_macro
             patience_counter = 0
             # Сохраняем лучшую модель
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'val_f1': val_f1,
-            }, 'best_model.pth')
-            print(f"New best model saved with Val F1: {val_f1:.4f}")
+                'val_f1_macro': val_f1_macro,
+            }, 'best_model_reviews.pth')
+            print(f"New best model saved with Val F1 Macro: {val_f1_macro:.4f}")
         else:
             patience_counter += 1
 
         scheduler.step(avg_val_loss)
 
         print(f'Epoch {epoch + 1}/{num_epochs}:')
-        print(f'  Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Train F1: {train_f1:.4f}')
-        print(f'  Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.2f}%, Val F1: {val_f1:.4f}')
+        print(
+            f'  Train Loss: {avg_train_loss:.4f}, Train Acc: {train_accuracy:.2%}, Train F1 Macro: {train_f1_macro:.4f}')
+        print(f'  Val Loss: {avg_val_loss:.4f}, Val Acc: {val_accuracy:.2%}, Val F1 Macro: {val_f1_macro:.4f}')
         print(f'  Learning Rate: {optimizer.param_groups[0]["lr"]:.2e}')
         print()
 
@@ -367,9 +368,10 @@ def train_nn(data: pd.DataFrame):
             print(f"Early stopping triggered after {epoch + 1} epochs")
             break
 
-    checkpoint = torch.load('best_model.pth')
+    # Загружаем лучшую модель для тестирования
+    checkpoint = torch.load('best_model_reviews.pth')
     model.load_state_dict(checkpoint['model_state_dict'])
-    print(f"Loaded best model from epoch {checkpoint['epoch'] + 1} with Val F1: {checkpoint['val_f1']:.4f}")
+    print(f"Loaded best model from epoch {checkpoint['epoch'] + 1} with Val F1 Macro: {checkpoint['val_f1_macro']:.4f}")
 
     plot_training_history(history)
 
@@ -380,66 +382,50 @@ def train_nn(data: pd.DataFrame):
     model.eval()
     all_test_predictions = []
     all_test_labels = []
-    test_probabilities = []
+    all_test_probabilities = []
 
     with torch.no_grad():
         for features, labels in test_loader:
             features = features.to(device)
-            outputs = model(features).squeeze()
-            predictions = (outputs > 0.5).float().cpu().numpy()
+            outputs = model(features)
+            probabilities = outputs.cpu().numpy()
+            predictions = torch.argmax(outputs, dim=1).cpu().numpy()
+
             all_test_predictions.extend(predictions)
             all_test_labels.extend(labels.numpy())
-            test_probabilities.extend(outputs.cpu().numpy())
+            all_test_probabilities.extend(probabilities)
 
     total_time = time.time() - start_time
     print(f"Total training and testing time: {total_time:.2f} seconds")
 
     # Детальная оценка на TEST SET
     print("\nTEST SET Classification Report:")
-    print(classification_report(all_test_labels, all_test_predictions))
+    print(classification_report(all_test_labels, all_test_predictions,
+                                target_names=['Positive (0)', 'Neutral (1)', 'Negative (2)']))
 
-    test_f1 = metrics.f1_score(all_test_labels, all_test_predictions)
     test_accuracy = metrics.accuracy_score(all_test_labels, all_test_predictions)
-    test_precision = metrics.precision_score(all_test_labels, all_test_predictions)
-    test_recall = metrics.recall_score(all_test_labels, all_test_predictions)
+    test_f1_macro = metrics.f1_score(all_test_labels, all_test_predictions, average='macro')
+    test_f1_weighted = metrics.f1_score(all_test_labels, all_test_predictions, average='weighted')
 
     print(f"TEST SET Metrics:")
     print(f"Accuracy:  {test_accuracy:.4f}")
-    print(f"Precision: {test_precision:.4f}")
-    print(f"Recall:    {test_recall:.4f}")
-    print(f"F1-Score:  {test_f1:.4f}")
+    print(f"F1 Macro:  {test_f1_macro:.4f}")
+    print(f"F1 Weighted: {test_f1_weighted:.4f}")
 
     # Матрица ошибок
     cm = confusion_matrix(all_test_labels, all_test_predictions)
     plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    plt.title('Confusion Matrix - Test Set')
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=['Positive', 'Neutral', 'Negative'],
+                yticklabels=['Positive', 'Neutral', 'Negative'])
+    plt.title('Confusion Matrix - Reviews Classification')
     plt.ylabel('True Label')
     plt.xlabel('Predicted Label')
-    plt.savefig('confusion_matrix_test.png', dpi=150, bbox_inches='tight')
+    plt.savefig('confusion_matrix_reviews.png', dpi=150, bbox_inches='tight')
     plt.show()
 
-    # ROC Curve
-    fpr, tpr, _ = metrics.roc_curve(all_test_labels, test_probabilities)
-    roc_auc = metrics.auc(fpr, tpr)
-
-    plt.figure(figsize=(8, 6))
-    plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (AUC = {roc_auc:.4f})')
-    plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) - Test Set')
-    plt.legend(loc="lower right")
-    plt.grid(True, alpha=0.3)
-    plt.savefig('roc_curve_test.png', dpi=150, bbox_inches='tight')
-    plt.show()
-
-    print(f"\nROC AUC Score: {roc_auc:.4f}")
-
-    torch.save(model.state_dict(), 'final_toxicity_model.pth')
-    print("Final model saved as 'final_toxicity_model.pth'")
+    torch.save(model.state_dict(), 'final_reviews_model.pth')
+    print("Final model saved as 'final_reviews_model.pth'")
 
 
 def test_gpu_cuda():
@@ -453,16 +439,23 @@ def test_gpu_cuda():
 
 
 if __name__ == "__main__":
-    print("Loading data...")
-    df1 = pd.read_csv(r'dataset/labeled_2ch_pikabu.csv')
-    df2 = pd.concat([pd.read_json('dataset/okru_part1.jsonl', lines=True),
-                     pd.read_json('dataset/okru_part2.jsonl', lines=True)], axis=0, ignore_index=True)
-    df2['comment'] = df2['text']
-    df2['toxic'] = df2['label'].apply(lambda x: float(x))
-    df2.drop('text', axis=1, inplace=True)
-    df2.drop('label', axis=1, inplace=True)
+    print("Loading reviews data...")
 
-    total_df = pd.concat([df1, df2], axis=0, ignore_index=True)
+    # Загрузка данных с отзывами
+    # Предполагается, что данные в формате: id,text,src,label
+    reviews_data = pd.read_csv('dataset/train.csv')
+    news_data = pd.read_csv('dataset/news_train.csv', delimiter='\t')
+    women_clothing_data = pd.read_csv('dataset/women-clothing-accessories.3-class.balanced.csv', delimiter='\t')
+
+    total_df = pd.concat([reviews_data, news_data, women_clothing_data], ignore_index=True)
+    print(total_df.columns.tolist())
+    print(len(total_df))
+
+    # reviews_data = pd.read_csv('your_reviews_dataset.csv', names=['id', 'text', 'src', 'label'])
+
+    print(f"Loaded {len(total_df)} reviews")
+    print("Class distribution:")
+    print(total_df['label'].value_counts().sort_index())
 
     test_gpu_cuda()
     train_nn(total_df)
