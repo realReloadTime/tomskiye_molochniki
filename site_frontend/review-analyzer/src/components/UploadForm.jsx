@@ -67,6 +67,7 @@ export default function UploadForm({ onResult }) {
           const normalizedData = {
             totalRecords: data.totalRecords || 0,
             positiveCount: data.positiveCount || 0,
+            neutralCount: data.neutralCount || 0, 
             negativeCount: data.negativeCount || 0,
             analysisDate: data.analysisDate,
             type: 'file'
