@@ -3,6 +3,8 @@ import torch
 import pandas as pd
 import numpy as np
 import multiprocessing as mp
+
+from fontTools.misc.bezierTools import printSegments
 from joblib.externals.loky import ProcessPoolExecutor
 import os
 
@@ -135,15 +137,19 @@ def process_sentiment_csv(df: pd.DataFrame, model, vectorizer, device='cpu') -> 
         cleaned_texts, model, vectorizer, device
     )
 
-    # Преобразуем числовые метки в текстовые
     sentiments = [get_sentiment_label(pred) for pred in predictions]
+    labels = []
+    for sentiment in sentiments:
+        if sentiment == 'нейтральный':
+            labels.append(0)
+        elif sentiment == 'положительный':
+            labels.append(1)
+        else:
+           labels.append(2)
 
     result_df = pd.DataFrame({
         'ID': df['ID'],
-        'text': df['text'],
-        'class_label': predictions,
-        'confidence': confidences,
-        'sentiment': sentiments
+        'label': labels
     })
 
     return result_df
@@ -193,6 +199,7 @@ if __name__ == "__main__":
 
     # Создаем тестовый DataFrame
     sample_data = pd.DataFrame({
+        'ID': [1, 2, 3, 4, 5],
         'text': [
             "Очень понравилось, рекомендую!",
             "Нормальный товар, но дорогой",
