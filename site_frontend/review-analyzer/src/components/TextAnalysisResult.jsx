@@ -1,72 +1,64 @@
-export default function FileAnalysisResult({ result }) {
+export default function TextAnalysisResult({ result }) {
   if (!result) return null;
 
-  // Добавьте проверку на наличие records
-  const records = result.records || [];
-  
+  // Определяем цвета по classLabel
+  const getVerdictConfig = (label) => {
+    const map = {
+      positive: { text: 'Положительный', color: 'positive' },
+      neutral: { text: 'Нейтральный', color: 'neutral' },
+      negative: { text: 'Отрицательный', color: 'negative' }
+    };
+    return map[label] || map.negative;
+  };
+
+  const verdict = getVerdictConfig(result.classLabel);
+
+  const getConfidenceLevel = (prob) => {
+    if (prob > 0.8) return 'high';
+    if (prob > 0.5) return 'medium';
+    return 'low';
+  };
+
+  const confidenceLevel = getConfidenceLevel(result.probability);
+
   return (
-    <div className="file-analysis-modal">
+    <div className="analysis-modal" onClick={(e) => e.stopPropagation()}>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>📊 Результат анализа файла</h2>
+          <h2>💬 Анализ отзыва</h2>
         </div>
-        
+
         <div className="modal-body">
-          <div className="file-info">
-            {/* УБРАТЬ fileName - его нет в ответе бэкенда */}
-            <p><strong>📈 Всего записей:</strong> {result.totalRecords || 0}</p>
-            <p><strong>🟢 Позитивных:</strong> {result.positiveCount || 0}</p>
-            <p><strong>🔴 Негативных:</strong> {result.negativeCount || 0}</p>
-            <p><strong>📅 Дата анализа:</strong> {result.analysisDate ? new Date(result.analysisDate).toLocaleString() : 'Не указана'}</p>
+          <div className="text-section">
+            <div className="section-title">Ваш отзыв</div>
+            <div className="text-bubble">
+              {result.comment}
+            </div>
           </div>
 
-          {/* Показываем таблицу только если есть records */}
-          {records.length > 0 && (
-            <div className="records-list">
-              <h4>Детали анализа:</h4>
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Текст</th>
-                      <th>Вердикт</th>
-                      <th>Уверенность</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {records.slice(0, 10).map((record, index) => (
-                      <tr key={index}>
-                        <td className="text-cell">
-                          {record.comment?.length > 100 
-                            ? record.comment.substring(0, 100) + '...' 
-                            : record.comment
-                          }
-                        </td>
-                        <td className={record.classLabel === 1 ? 'toxic' : 'non-toxic'}>
-                          {record.classLabel === 1 ? '🔴 Токсичный' : '🟢 Нетоксичный'}
-                        </td>
-                        <td className="confidence">
-                          {((record.probability || 0) * 100).toFixed(2)}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-                {records.length > 10 && (
-                  <p className="more-records">
-                    ... и еще {records.length - 10} записей
-                  </p>
-                )}
+          <div className="result-section">
+            <div className="verdict-item">
+              <div className="label">Вердикт</div>
+              <div className={`verdict ${verdict.color}`}>
+                {verdict.text}
               </div>
             </div>
-          )}
 
-          {/* Сообщение если records нет */}
-          {records.length === 0 && (
-            <div className="no-records">
-              <p>Детальная информация по записям недоступна</p>
+            <div className="confidence-item">
+              <div className="label">Уверенность</div>
+              <div className="confidence-container">
+                <div className="confidence-bar">
+                  <div
+                    className={`confidence-fill ${verdict.color}`}
+                    style={{ width: `${(result.probability * 100)}%` }}
+                  ></div>
+                </div>
+                <div className="confidence-text">
+                  {(result.probability * 100).toFixed(1)}%
+                </div>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </div>
